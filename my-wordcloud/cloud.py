@@ -1,9 +1,10 @@
-import spacy, csv, re, sys, textacy
+import os
+
+import spacy, csv, textacy
 from wordcloud import WordCloud
-import multidict as multidict
 import matplotlib.pyplot as plt
-from itertools import groupby
 from enum import Enum
+import utils
 
 nlp_en = spacy.load("it_core_news_sm")
 nlp_it = spacy.load("en_core_web_sm")
@@ -12,56 +13,30 @@ stopwords_en = spacy.lang.en.stop_words.STOP_WORDS.union({"book", "author", "nov
 stopwords_it = spacy.lang.it.stop_words.STOP_WORDS.union({"libro", "autore", "volume", "romanzo", "introduzione"})
 stopwords = stopwords_en.union(stopwords_it)
 
-def to_multidict(d: dict):
-    multi = multidict.MultiDict()
-    for key in d:
-        multi.add(key, d[key])
-    return multi
-
-def to_normal_dict(multi):
-    return {k: v for k, v in multi.items()}
-
-
 CLEANER = " ,‟”;-\".()?!"
+
 
 class Mode(Enum):
     NOUN_CHUNKS = 1
     NGRAMS = 2
 
-def flatten(nested):
-    return [item for l in nested for item in l]
-
-def splitBy(chunk, connectives):
-    l = chunk.split()
-    if any([x in connectives for x in l]):
-        groupby(l, lambda x: x == "")
-        lists = [list(group) for k, group in groupby(l, lambda x: x in connectives) if not k]
-        return flatten(lists)
-    else:
-        return [chunk]
-
-def strip_list(l):
-    while l and (l[-1] in stopwords or l[-1].isnumeric()):
-        l.pop()
-    l.reverse()
-    while l and (l[-1] in stopwords or l[-1].isnumeric()):
-        l.pop()
-    l.reverse()
-    return l
 
 def clean_chunk(chunk):
     clean_chunk = chunk.lower().strip(CLEANER)
     split_chunk = clean_chunk.split()
-    chunk = ' '.join(strip_list([t for t in split_chunk]))
+    chunk = ' '.join(utils.strip_list([t for t in split_chunk], stopwords))
     return chunk
 
+
 def getNounChunks(doc, connectives):
-        chunks = [chunk.text for chunk in doc.noun_chunks]
-        chunks_expanded = [splitBy(chunk, connectives) for chunk in chunks]
-        return flatten(chunks_expanded)
+    chunks = [chunk.text for chunk in doc.noun_chunks]
+    chunks_expanded = [utils.splitBy(chunk, connectives) for chunk in chunks]
+    return utils.flatten(chunks_expanded)
+
 
 def getNGrams(doc, n: int):
     return [ngram.text for ngram in list(textacy.extract.basics.ngrams(doc, n))]
+
 
 def getFrequencyDictForText(chunks):
     tmpDict = {}
@@ -72,11 +47,11 @@ def getFrequencyDictForText(chunks):
             continue
         val = tmpDict.get(cleaned, 0)
         tmpDict[cleaned] = val + 1
-    
-    return to_multidict(tmpDict)
+
+    return utils.to_multidict(tmpDict)
+
 
 def makeImage(freqs):
-
     wc = WordCloud(background_color="white", max_words=500, relative_scaling='auto')
     wc.generate_from_frequencies(freqs)
 
@@ -87,7 +62,7 @@ def makeImage(freqs):
 
 chunks = []
 MODE = Mode.NGRAMS
-filePath = '<myFilePath>'
+filePath = os.path.expanduser('~/Desktop/HandyLib.csv')
 
 with open(filePath) as csvfile:
     reader = csv.DictReader(csvfile)
@@ -105,9 +80,8 @@ with open(filePath) as csvfile:
             chunks += getNounChunks(doc_en, ["and", "or"]) + getNounChunks(doc_it, ["e", "o"])
         elif MODE == Mode.NGRAMS:
             chunks += getNGrams(doc_en, 3) + getNGrams(doc_it, 3)
-        else: continue
-
-print(chunks)
+        else:
+            continue
 
 freqs = getFrequencyDictForText(chunks)
 
@@ -115,8 +89,6 @@ freqs = getFrequencyDictForText(chunks)
 # factor = 1.0 / sum(freqs_normal_dict.values())
 # freqs = to_multidict({k: v * factor for k, v in freqs_normal_dict.items()})
 
-#print(sorted({item for item in freqs.items()}, key=lambda item: item[1], reverse=True))
+# print(sorted({item for item in freqs.items()}, key=lambda item: item[1], reverse=True))
 
 makeImage(freqs)
-
-
