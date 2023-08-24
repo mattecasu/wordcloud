@@ -1,8 +1,10 @@
 from enum import Enum
 
+import spacy
 import textacy
 
-import utils, books_utils
+import books_utils
+import utils
 
 CLEANER = " ,‟”;-\".()?!"
 
@@ -12,7 +14,7 @@ class Mode(Enum):
     NGRAMS = 2
 
 
-def clean_chunk(chunk):
+def clean_chunk(chunk: str):
     clean_chunk = chunk.lower().strip(CLEANER)
     split_chunk = clean_chunk.split()
     chunk = ' '.join(utils.strip_list([t for t in split_chunk], books_utils.STOPWORDS))
@@ -25,18 +27,17 @@ def get_noun_chunks(doc, connectives):
     return utils.flatten(chunks_expanded)
 
 
-def get_n_grams(doc, n: int):
+def get_n_grams(doc: spacy.tokens.Doc, n: int):
     return [ngram.text for ngram in list(textacy.extract.basics.ngrams(doc, n))]
 
 
 def get_frequency_dict_for_text(chunks):
-    tmpDict = {}
-
+    d = dict()
     for chunk in chunks:
         cleaned = clean_chunk(chunk)
         if (cleaned == "") or (cleaned in books_utils.STOPWORDS):
             continue
-        val = tmpDict.get(cleaned, 0)
-        tmpDict[cleaned] = val + 1
+        val = d.get(cleaned, 0)
+        d[cleaned] = val + 1
 
-    return utils.to_multidict(tmpDict)
+    return utils.to_multidict(d)

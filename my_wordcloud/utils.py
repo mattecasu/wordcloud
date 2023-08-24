@@ -23,7 +23,7 @@ def split_by(chunk, connectives):
     if any([x in connectives for x in l]):
         groupby(l, lambda x: x == "")
         lists = [list(group) for k, group in groupby(l, lambda x: x in connectives) if not k]
-        return flatten(lists)
+        return [' '.join(l) for l in lists]
     else:
         return [chunk]
 

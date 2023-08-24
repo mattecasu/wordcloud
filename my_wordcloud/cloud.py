@@ -1,14 +1,17 @@
+import csv
+import logging
 import os
 
-import csv, logging
-from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+
 import books_utils
 import linguistics
 
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-MODE = linguistics.Mode.NGRAMS
+MODE = linguistics.Mode.NOUN_CHUNKS
 CSV_FIELDS = ['Title', 'Summary']
 CSV_PATH = os.path.expanduser('~/Desktop/HandyLib.csv')
 
@@ -42,9 +45,11 @@ with open(CSV_PATH) as csvfile:
         else:
             continue
 
+logger.info(f"Created {len(chunks)} chunks.")
+
 freqs = linguistics.get_frequency_dict_for_text(chunks)
 
-logger.info(
+logger.debug(
     sorted({(chunk, freq) for (chunk, freq) in freqs.items() if freq > 2}, key=lambda item: item[1], reverse=True))
 
 make_image(freqs)

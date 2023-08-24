@@ -1,23 +1,23 @@
 [tool.poetry]
-name = "my-wordcloud"
+name = "my_wordcloud"
 version = "0.1.0"
 description = ""
 readme = "README.md"
-packages = [{include = "my-wordcloud"}]
+packages = [{ include = "my_wordcloud" }]
 authors = ["Matteo Casu"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
 spacy = "^3.6.1"
-it_core_news_sm = {url = "https://github.com/explosion/spacy-models/releases/download/it_core_news_sm-3.6.0/it_core_news_sm-3.6.0.tar.gz"}
-en_core_web_sm = {url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.6.0/en_core_web_sm-3.6.0.tar.gz"}
+it_core_news_sm = { url = "https://github.com/explosion/spacy-models/releases/download/it_core_news_sm-3.6.0/it_core_news_sm-3.6.0.tar.gz" }
+en_core_web_sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.6.0/en_core_web_sm-3.6.0.tar.gz" }
 textacy = "^0.13.0"
 matplotlib = "^3.7.2"
 wordcloud = "^1.9.2"
 multidict = "^6.0.4"
+pytest = "^7.4.0"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
