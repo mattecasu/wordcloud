@@ -17,7 +17,7 @@ CSV_PATH = os.path.expanduser('~/Desktop/HandyLib.csv')
 
 
 def make_image(freqs):
-    wc = WordCloud(background_color="white", max_words=500, relative_scaling='auto')
+    wc = WordCloud(background_color="white", max_words=500, relative_scaling=.5)
     wc.generate_from_frequencies(freqs)
 
     plt.imshow(wc, interpolation="bilinear")
