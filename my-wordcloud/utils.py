@@ -1,3 +1,5 @@
+from itertools import groupby
+
 import multidict
 
 
@@ -16,7 +18,7 @@ def to_normal_dict(multi):
     return {k: v for k, v in multi.items()}
 
 
-def splitBy(chunk, connectives):
+def split_by(chunk, connectives):
     l = chunk.split()
     if any([x in connectives for x in l]):
         groupby(l, lambda x: x == "")

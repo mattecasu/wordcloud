@@ -1,57 +1,19 @@
 import os
 
-import spacy, csv, textacy
+import csv, logging
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-from enum import Enum
-import utils
+import books_utils
+import linguistics
 
-nlp_en = spacy.load("it_core_news_sm")
-nlp_it = spacy.load("en_core_web_sm")
+logger = logging.getLogger(__name__)
 
-stopwords_en = spacy.lang.en.stop_words.STOP_WORDS.union({"book", "author", "novel", "introduction", "chapter"})
-stopwords_it = spacy.lang.it.stop_words.STOP_WORDS.union({"libro", "autore", "volume", "romanzo", "introduzione"})
-stopwords = stopwords_en.union(stopwords_it)
-
-CLEANER = " ,‟”;-\".()?!"
+MODE = linguistics.Mode.NGRAMS
+CSV_FIELDS = ['Title', 'Summary']
+CSV_PATH = os.path.expanduser('~/Desktop/HandyLib.csv')
 
 
-class Mode(Enum):
-    NOUN_CHUNKS = 1
-    NGRAMS = 2
-
-
-def clean_chunk(chunk):
-    clean_chunk = chunk.lower().strip(CLEANER)
-    split_chunk = clean_chunk.split()
-    chunk = ' '.join(utils.strip_list([t for t in split_chunk], stopwords))
-    return chunk
-
-
-def getNounChunks(doc, connectives):
-    chunks = [chunk.text for chunk in doc.noun_chunks]
-    chunks_expanded = [utils.splitBy(chunk, connectives) for chunk in chunks]
-    return utils.flatten(chunks_expanded)
-
-
-def getNGrams(doc, n: int):
-    return [ngram.text for ngram in list(textacy.extract.basics.ngrams(doc, n))]
-
-
-def getFrequencyDictForText(chunks):
-    tmpDict = {}
-
-    for chunk in chunks:
-        cleaned = clean_chunk(chunk)
-        if (cleaned == "") or (cleaned in stopwords):
-            continue
-        val = tmpDict.get(cleaned, 0)
-        tmpDict[cleaned] = val + 1
-
-    return utils.to_multidict(tmpDict)
-
-
-def makeImage(freqs):
+def make_image(freqs):
     wc = WordCloud(background_color="white", max_words=500, relative_scaling='auto')
     wc.generate_from_frequencies(freqs)
 
@@ -60,35 +22,29 @@ def makeImage(freqs):
     plt.show()
 
 
-chunks = []
-MODE = Mode.NGRAMS
-filePath = os.path.expanduser('~/Desktop/HandyLib.csv')
+def get_values(fields):
+    return [row[field].strip() for field in fields]
 
-with open(filePath) as csvfile:
+
+chunks = []
+with open(CSV_PATH) as csvfile:
     reader = csv.DictReader(csvfile)
     for row in reader:
-        values = (
-            row['Title'].strip(),
-            # row['Author'].strip(),
-            row['Summary'].strip()
-            ,)
+        values = get_values(CSV_FIELDS)
         text = " . " + ' . '.join(values)
-        doc_it = nlp_it(text)
-        doc_en = nlp_en(text)
-
-        if MODE == Mode.NOUN_CHUNKS:
-            chunks += getNounChunks(doc_en, ["and", "or"]) + getNounChunks(doc_it, ["e", "o"])
-        elif MODE == Mode.NGRAMS:
-            chunks += getNGrams(doc_en, 3) + getNGrams(doc_it, 3)
+        doc_it = books_utils.nlp_it(text)
+        doc_en = books_utils.nlp_en(text)
+        if MODE == linguistics.Mode.NOUN_CHUNKS:
+            chunks += linguistics.get_noun_chunks(doc_en, ["and", "or"])
+            chunks += linguistics.get_noun_chunks(doc_it, ["e", "o"])
+        elif MODE == linguistics.Mode.NGRAMS:
+            chunks += linguistics.get_n_grams(doc_en, 3) + linguistics.get_n_grams(doc_it, 3)
         else:
             continue
 
-freqs = getFrequencyDictForText(chunks)
+freqs = linguistics.get_frequency_dict_for_text(chunks)
 
-# freqs_normal_dict = to_normal_dict(freqs)
-# factor = 1.0 / sum(freqs_normal_dict.values())
-# freqs = to_multidict({k: v * factor for k, v in freqs_normal_dict.items()})
+logger.info(
+    sorted({(chunk, freq) for (chunk, freq) in freqs.items() if freq > 2}, key=lambda item: item[1], reverse=True))
 
-# print(sorted({item for item in freqs.items()}, key=lambda item: item[1], reverse=True))
-
-makeImage(freqs)
+make_image(freqs)
