@@ -1,8 +1,17 @@
 # my-wordcloud
+
 A generator of wordcloud
 
 # Running
 
-Run:
-`poetry install`
-`poetry run python3 cloud.py`
+To install:
+
+```
+poetry install
+```
+
+Change/choose the constants in cloud.py (`MODE`, `CSV_FIELDS`, `CSV_PATH`), then run with:
+
+```
+poetry run python3 cloud.py
+```
