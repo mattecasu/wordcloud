@@ -8,9 +8,9 @@ authors = ["Matteo Casu"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-spacy = "^3.6.1"
-it_core_news_sm = { url = "https://github.com/explosion/spacy-models/releases/download/it_core_news_sm-3.6.0/it_core_news_sm-3.6.0.tar.gz" }
-en_core_web_sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.6.0/en_core_web_sm-3.6.0.tar.gz" }
+spacy = "^3.7.2"
+it_core_news_sm = { url = "https://github.com/explosion/spacy-models/releases/download/it_core_news_sm-3.7.0/it_core_news_sm-3.7.0.tar.gz" }
+en_core_web_sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.0/en_core_web_sm-3.7.0.tar.gz" }
 textacy = "^0.13.0"
 matplotlib = "^3.7.2"
 wordcloud = "^1.9.2"
