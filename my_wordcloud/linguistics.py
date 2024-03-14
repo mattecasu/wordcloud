@@ -15,8 +15,8 @@ class Mode(Enum):
 
 
 def clean_chunk(chunk: str):
-    clean_chunk = chunk.lower().strip(CLEANER)
-    split_chunk = clean_chunk.split()
+    cleaned_chunk = chunk.lower().strip(CLEANER)
+    split_chunk = cleaned_chunk.split()
     chunk = ' '.join(utils.strip_list([t for t in split_chunk], books_utils.STOPWORDS))
     return chunk
 
