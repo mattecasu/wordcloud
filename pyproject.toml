@@ -14,7 +14,7 @@ en_core_web_sm = { url = "https://github.com/explosion/spacy-models/releases/dow
 textacy = "^0.13.0"
 matplotlib = "^3.10.1"
 wordcloud = "^1.9.4"
-multidict = "^6.1.0"
+multidict = "^6.2.0"
 pytest = "^8.3.5"
 
 
