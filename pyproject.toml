@@ -12,7 +12,7 @@ spacy = "^3.8.7"
 it_core_news_sm = { url = "https://github.com/explosion/spacy-models/releases/download/it_core_news_sm-3.8.0/it_core_news_sm-3.8.0.tar.gz" }
 en_core_web_sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz" }
 textacy = "^0.13.0"
-matplotlib = "^3.10.1"
+matplotlib = "^3.10.3"
 wordcloud = "^1.9.4"
 multidict = "^6.4.3"
 pytest = "^8.3.5"
