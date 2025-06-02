@@ -8,7 +8,7 @@ authors = ["Matteo Casu"]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
-spacy = "^3.8.5"
+spacy = "^3.8.7"
 it_core_news_sm = { url = "https://github.com/explosion/spacy-models/releases/download/it_core_news_sm-3.8.0/it_core_news_sm-3.8.0.tar.gz" }
 en_core_web_sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0.tar.gz" }
 textacy = "^0.13.0"
